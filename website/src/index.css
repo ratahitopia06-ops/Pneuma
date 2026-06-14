@@ -1,0 +1,67 @@
+:root {
+  --bg-space: #07060b;
+  --bg-void: #0d0c15;
+  --bg-nebula: #141226;
+  --bg-card: #191632;
+  --text-gold: #e2b857;
+  --text-amber: #f59e0b;
+  --text-lavender: #d8b4fe;
+  --text-light: #f3f4f6;
+  --text-muted: #9ca3af;
+  --border-cosmic: #2b274c;
+  --border-active: #e2b857;
+  --accent-glow: rgba(226, 184, 87, 0.15);
+  --sans: 'Cinzel', system-ui, -apple-system, sans-serif;
+  --body-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-space);
+  color: var(--text-light);
+  font-family: var(--body-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at 50% 0%, var(--bg-nebula) 0%, var(--bg-space) 80%);
+}
+
+h1, h2, h3, h4, .brand-font {
+  font-family: var(--sans);
+  letter-spacing: 0.05em;
+  color: #ffffff;
+}
+
+a {
+  color: var(--text-gold);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: var(--text-amber);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-space);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-cosmic);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-gold);
+}
