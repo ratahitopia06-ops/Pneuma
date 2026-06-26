@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { 
-  Compass, Sun, Moon, Sparkles, Clock, MapPin, 
+  Compass, Sun, Moon, Sparkles, Clock, MapPin, Target, Globe,
   CreditCard, Download, BookOpen, ShieldCheck, 
   Calendar, Flame, Droplets, Wind, Mountain, 
   Menu, X, ChevronRight, ArrowRight, Lock, 
@@ -8,79 +8,12 @@ import {
 } from 'lucide-react'
 import './App.css'
 
-// Astrological data rules
-const ZODIAC_SIGNS = [
-  { name: 'Aries', start: '03-21', end: '04-19', gate: 'Head & Cerebral Gate', element: 'Fire', color: '#f87171' },
-  { name: 'Taurus', start: '04-20', end: '05-20', gate: 'Throat & Vocal Gate', element: 'Earth', color: '#fbbf24' },
-  { name: 'Gemini', start: '05-21', end: '06-20', gate: 'Shoulders & Lung Gate', element: 'Air', color: '#34d399' },
-  { name: 'Cancer', start: '06-21', end: '07-22', gate: 'Stomach & Breast Gate', element: 'Water', color: '#60a5fa' },
-  { name: 'Leo', start: '07-23', end: '08-22', gate: 'Heart & Solar Gate', element: 'Fire', color: '#fb923c' },
-  { name: 'Virgo', start: '08-23', end: '09-22', gate: 'Spleen & Digestive Gate', element: 'Earth', color: '#ca8a04' },
-  { name: 'Libra', start: '09-23', end: '10-22', gate: 'Kidney & Balance Gate', element: 'Air', color: '#f472b6' },
-  { name: 'Scorpio', start: '10-23', end: '11-21', gate: 'Reproductive & Regenerative Gate', element: 'Water', color: '#a855f7' },
-  { name: 'Sagittarius', start: '11-22', end: '12-21', gate: 'Thighs & Locomotor Gate', element: 'Fire', color: '#f43f5e' },
-  { name: 'Capricorn', start: '12-22', end: '01-19', gate: 'Bones & Structural Gate', element: 'Earth', color: '#94a3b8' },
-  { name: 'Aquarius', start: '01-20', end: '02-18', gate: 'Ankles & Circulatory Gate', element: 'Air', color: '#818cf8' },
-  { name: 'Pisces', start: '02-19', end: '03-20', gate: 'Feet & Lymphatic Gate', element: 'Water', color: '#22d3ee' }
-];
-
-const GATE_IMBALANCES = {
-  'Head & Cerebral Gate': 'Prone to systemic heat and vascular pressure. Needs cooling, anti-inflammatory bitter leaf catalysts in the Catabolic Morning, and strict avoidance of high-histamine foods before solar midday.',
-  'Throat & Vocal Gate': 'Prone to lymphatic stagnation and metabolic dampness. Requires dry warmth, warm spicy broths (ginger, clove, cardamom) in the Hybrid Midday, and early evening anabolic sealing to restrict mucous formation.',
-  'Shoulders & Lung Gate': 'Prone to nervous system hyper-conductivity and respiratory dryness. Demands lubricating, mucilaginous root elements, high-density mineral infusions, and rich adaptogenic fats (ghee, sesame oil) during the anabolic evening.',
-  'Stomach & Breast Gate': 'Prone to enzymatic cooling, low hydrochloric acidity, and digestive stasis. Needs thermal ignition, highly cooked root stews, sour digestive catalysts (raw apple cider vinegar) in the morning, and warming furnace pastes.',
-  'Heart & Solar Gate': 'Prone to arterial heat, energetic exhaustion, and high metabolic burn. Sourced with cooling chlorophylls, premium raw olive oils, light easily-assimilated proteins, and soothing mineral-dense nighttime sealing.',
-  'Spleen & Digestive Gate': 'Prone to cold digestive insufficiency and chronic nutrient malabsorption. Treats this spleen gate as the core correction layer: requires dry warmth, strict cooked-only dietary rhythm (no cold raw salads), and sour/bitter catalysts to ignite digestive fire.',
-  'Kidney & Balance Gate': 'Prone to electrolyte filtration fatigue and adrenal depletion. Sourced by mineralized herbal tea matrices, rich clean fats to support renal thermal warmth, and early evening anabolic protein loading.',
-  'Reproductive & Regenerative Gate': 'Prone to pelvic heat congestion and fluid-element sluggishness. Needs deep anti-inflammatory roots (turmeric), bitter lymphatic clearing agents in the morning, and clean light-steamed leafy diets.',
-  'Thighs & Locomotor Gate': 'Prone to hepatic heat and cellular muscle tissue breakdown. Demands amino acid rich broths, clean sulfur compounds (alliums), and cooling, mineral-dense nighttime sealing (skullcap, chamomile).',
-  'Bones & Structural Gate': 'Prone to structural coldness, dry joint matrix, and slow calcium synthesis. Demands deep anabolic collagen/bone broths, warming digestive oils, and Saturnian bitter evening infusions to stimulate marrow health.',
-  'Ankles & Circulatory Gate': 'Prone to peripheral vascular stagnation and nervous system static charge. Demands vasodilating warming herbs (cayenne, ginger), magnesium-dense leafy matrices, and strict non-interactive overnight gut sealing.',
-  'Feet & Lymphatic Gate': 'Prone to systemic damp fluid accumulation and cellular toxic retention. Needs diuretic bitter infusions, drying grains (buckwheat, millet), thermal metabolic ignition, and early morning catabolic fasting.'
-};
-
-function getZodiacInfo(dateStr) {
-  if (!dateStr) return ZODIAC_SIGNS[5]; // Default Virgo
-  const parts = dateStr.split('-');
-  if (parts.length !== 3) return ZODIAC_SIGNS[5];
-  
-  const month = parseInt(parts[1], 10);
-  const day = parseInt(parts[2], 10);
-  
-  for (const sign of ZODIAC_SIGNS) {
-    const [sM, sD] = sign.start.split('-').map(Number);
-    const [eM, eD] = sign.end.split('-').map(Number);
-    
-    if (sign.name === 'Capricorn') {
-      if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) {
-        return sign;
-      }
-    } else {
-      if ((month === sM && day >= sD) || (month === eM && day <= eD)) {
-        return sign;
-      }
-    }
-  }
-  return ZODIAC_SIGNS[5];
-}
-
-function getAscendantInfo(sunSignName, birthTimeStr) {
-  if (!birthTimeStr) return ZODIAC_SIGNS[0]; // Default Aries
-  
-  const [hoursStr] = birthTimeStr.split(':');
-  const hours = parseInt(hoursStr, 10);
-  
-  const sunSignIndex = ZODIAC_SIGNS.findIndex(s => s.name === sunSignName);
-  
-  // Estimate ascendant based on sunrise at 6am
-  let diffHours = hours - 6;
-  if (diffHours < 0) diffHours += 24;
-  
-  const signShift = Math.floor(diffHours / 2) % 12;
-  const ascendantIndex = (sunSignIndex + signShift) % 12;
-  
-  return ZODIAC_SIGNS[ascendantIndex];
-}
+// Import real astrological calculation engine
+import { 
+  calculateChart, 
+  geocodeLocation,
+  TIMEZONE_OPTIONS
+} from './astrology.js'
 
 function App() {
   const [activeTab, setActiveTab] = useState('landing');
@@ -92,8 +25,11 @@ function App() {
     birthDate: '',
     birthTime: '',
     birthTimezone: 'Pacific/Auckland',
-    birthLocation: ''
+    birthLocation: '',
+    latitude: '',
+    longitude: ''
   });
+  const [geocodingStatus, setGeocodingStatus] = useState(''); // '', 'loading', 'found', 'error'
   const [errors, setErrors] = useState({});
   const [analyzingState, setAnalyzingState] = useState(0); // 0=idle, 1=analyzing, 2=complete
   const [analyzingText, setAnalyzingText] = useState('');
@@ -151,29 +87,47 @@ function App() {
     if (!formData.birthTime) newErrors.birthTime = "Birth time is crucial for Ascendant Body Gate calculations.";
     if (!formData.birthLocation.trim()) newErrors.birthLocation = "Birth city/location is required for coordinates.";
     
+    // Validate lat/lng if provided
+    const lat = parseFloat(formData.latitude);
+    const lng = parseFloat(formData.longitude);
+    if (formData.latitude && (isNaN(lat) || lat < -90 || lat > 90)) {
+      newErrors.latitude = "Latitude must be between -90 and 90.";
+    }
+    if (formData.longitude && (isNaN(lng) || lng < -180 || lng > 180)) {
+      newErrors.longitude = "Longitude must be between -180 and 180.";
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleGeocode = async () => {
+    if (!formData.birthLocation.trim()) {
+      setErrors(prev => ({ ...prev, birthLocation: "Enter a location first." }));
+      return;
+    }
+    setGeocodingStatus('loading');
+    const result = await geocodeLocation(formData.birthLocation);
+    if (result) {
+      setFormData(prev => ({
+        ...prev,
+        latitude: result.lat.toString(),
+        longitude: result.lng.toString()
+      }));
+      setGeocodingStatus('found');
+    } else {
+      setGeocodingStatus('error');
+    }
   };
 
   const handleSubmitIntake = (e) => {
     e.preventDefault();
     if (!validateForm()) return;
     
-    // Calculate Chart Properties
-    const sunSignInfo = getZodiacInfo(formData.birthDate);
-    const ascendantSignInfo = getAscendantInfo(sunSignInfo.name, formData.birthTime);
-    const bodyGate = sunSignInfo.gate; // Sun gate is primary body gate
-    const elementalExcess = sunSignInfo.element;
-    const correctiveAction = GATE_IMBALANCES[bodyGate] || GATE_IMBALANCES['Spleen & Digestive Gate'];
+    // Calculate chart using real ephemeris-based engine
+    const result = calculateChart(formData);
     
-    setChartResult({
-      sunSign: sunSignInfo,
-      ascendantSign: ascendantSignInfo,
-      bodyGate,
-      elementalExcess,
-      correctiveAction
-    });
-    
+    setChartResult(result);
     setAnalyzingState(1);
   };
 
@@ -184,8 +138,11 @@ function App() {
       birthDate: '',
       birthTime: '',
       birthTimezone: 'Pacific/Auckland',
-      birthLocation: ''
+      birthLocation: '',
+      latitude: '',
+      longitude: ''
     });
+    setGeocodingStatus('');
     setChartResult(null);
     setActiveTab('intake');
   };
@@ -527,16 +484,88 @@ function App() {
                       <label className="form-label">
                         <MapPin size={16} /> Birth Location <span>*</span>
                       </label>
-                      <input 
-                        type="text" 
-                        name="birthLocation" 
-                        value={formData.birthLocation}
-                        onChange={handleInputChange}
-                        className="form-input" 
-                        placeholder="e.g. Wellington, NZ" 
-                      />
-                      {errors.birthLocation && <div className="validation-error"><AlertCircle size={14} /> {errors.birthLocation}</div>}
-                      <div className="form-note">Determines coordinates of sunrise gate.</div>
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                        <div style={{ flex: 1 }}>
+                          <input 
+                            type="text" 
+                            name="birthLocation" 
+                            value={formData.birthLocation}
+                            onChange={handleInputChange}
+                            className="form-input" 
+                            placeholder="e.g. Wellington, NZ" 
+                          />
+                          {errors.birthLocation && <div className="validation-error"><AlertCircle size={14} /> {errors.birthLocation}</div>}
+                        </div>
+                        <button 
+                          type="button" 
+                          onClick={handleGeocode}
+                          className="btn-geocode"
+                          disabled={geocodingStatus === 'loading'}
+                          style={{
+                            padding: '0.6rem 1rem',
+                            background: 'var(--bg-surface)',
+                            border: '1px solid var(--border-cosmic)',
+                            borderRadius: '8px',
+                            color: 'var(--text-muted)',
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.4rem',
+                            fontSize: '0.85rem'
+                          }}
+                        >
+                          <Target size={14} />
+                          {geocodingStatus === 'loading' ? 'Finding...' : 'Find Coords'}
+                        </button>
+                      </div>
+                      <div className="form-note">
+                        Determines coordinates for accurate Ascendant calculation.
+                        {geocodingStatus === 'found' && (
+                          <span style={{ color: '#34d399', marginLeft: '0.5rem' }}>
+                            ✓ Coordinates found
+                          </span>
+                        )}
+                        {geocodingStatus === 'error' && (
+                          <span style={{ color: '#f87171', marginLeft: '0.5rem' }}>
+                            Could not find coordinates. Enter manually below.
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label className="form-label">
+                          <Globe size={16} /> Latitude
+                        </label>
+                        <input 
+                          type="text" 
+                          name="latitude" 
+                          value={formData.latitude}
+                          onChange={handleInputChange}
+                          className="form-input" 
+                          placeholder="e.g. -41.2865" 
+                        />
+                        {errors.latitude && <div className="validation-error"><AlertCircle size={14} /> {errors.latitude}</div>}
+                        <div className="form-note">Decimal degrees. Negative for South.</div>
+                      </div>
+
+                      <div className="form-group">
+                        <label className="form-label">
+                          <Globe size={16} /> Longitude
+                        </label>
+                        <input 
+                          type="text" 
+                          name="longitude" 
+                          value={formData.longitude}
+                          onChange={handleInputChange}
+                          className="form-input" 
+                          placeholder="e.g. 174.7762" 
+                        />
+                        {errors.longitude && <div className="validation-error"><AlertCircle size={14} /> {errors.longitude}</div>}
+                        <div className="form-note">Decimal degrees. Negative for West.</div>
+                      </div>
                     </div>
                   </div>
 
