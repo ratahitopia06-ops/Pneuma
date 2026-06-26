@@ -13,10 +13,17 @@
   --accent-glow: rgba(226, 184, 87, 0.15);
   --sans: 'Cinzel', system-ui, -apple-system, sans-serif;
   --body-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --glass-bg: rgba(13, 12, 21, 0.6);
+  --glass-border: rgba(226, 184, 87, 0.08);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
   background-color: var(--bg-space);
   color: var(--text-light);
   font-family: var(--body-sans);
@@ -29,13 +36,105 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: radial-gradient(circle at 50% 0%, var(--bg-nebula) 0%, var(--bg-space) 80%);
+  position: relative;
+  background: radial-gradient(ellipse at 50% 0%, var(--bg-nebula) 0%, var(--bg-space) 80%);
 }
 
+/* ============================================
+   COSMIC ANIMATED BACKGROUND — Constellation Particles
+   ============================================ */
+.cosmic-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cosmic-bg canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cosmic-bg-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Glow orbs */
+.cosmic-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cosmic-orb-1 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, #e2b857 0%, transparent 70%);
+  top: -200px;
+  right: -200px;
+  animation: orb-drift-1 20s ease-in-out infinite alternate;
+}
+
+.cosmic-orb-2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #d8b4fe 0%, transparent 70%);
+  bottom: -100px;
+  left: -100px;
+  animation: orb-drift-2 25s ease-in-out infinite alternate;
+}
+
+.cosmic-orb-3 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #34d399 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: orb-pulse 15s ease-in-out infinite alternate;
+}
+
+@keyframes orb-drift-1 {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-100px, 80px); }
+}
+
+@keyframes orb-drift-2 {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(80px, -60px); }
+}
+
+@keyframes orb-pulse {
+  0% { opacity: 0.04; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.08; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0.04; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ============================================
+   TYPE HIERARCHY
+   ============================================ */
 h1, h2, h3, h4, .brand-font {
   font-family: var(--sans);
   letter-spacing: 0.05em;
   color: #ffffff;
+}
+
+p {
+  line-height: 1.6;
 }
 
 a {
@@ -48,9 +147,11 @@ a:hover {
   color: var(--text-amber);
 }
 
-/* Custom Scrollbar */
+/* ============================================
+   SCROLLBAR
+   ============================================ */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -60,8 +161,105 @@ a:hover {
 ::-webkit-scrollbar-thumb {
   background: var(--border-cosmic);
   border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-gold);
+}
+
+/* ============================================
+   SCROLL ANIMATION UTILITY
+   ============================================ */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-in-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.fade-in-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.fade-in-scale {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Stagger delays */
+.stagger-1 { transition-delay: 0.1s; }
+.stagger-2 { transition-delay: 0.2s; }
+.stagger-3 { transition-delay: 0.35s; }
+.stagger-4 { transition-delay: 0.5s; }
+
+/* ============================================
+   KEYFRAME ANIMATIONS
+   ============================================ */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes rotate-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes border-glow {
+  0%, 100% { border-color: var(--border-cosmic); box-shadow: 0 0 0 rgba(226, 184, 87, 0); }
+  50% { border-color: var(--text-gold); box-shadow: 0 0 20px rgba(226, 184, 87, 0.08); }
+}
+
+@keyframes loading-bar {
+  0% { width: 0%; }
+  100% { width: 100%; }
 }

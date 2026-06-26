@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e2b857"/>
+      <stop offset="50%" stop-color="#f5d67a"/>
+      <stop offset="100%" stop-color="#b8923a"/>
+    </linearGradient>
+    <linearGradient id="darkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d0c15"/>
+      <stop offset="100%" stop-color="#141226"/>
+    </linearGradient>
+    <radialGradient id="glowGrad">
+      <stop offset="0%" stop-color="#e2b857" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#e2b857" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="200" cy="200" r="190" fill="url(#darkGrad)" stroke="url(#goldGrad)" stroke-width="1.5" opacity="0.9"/>
+  <circle cx="200" cy="200" r="185" fill="none" stroke="url(#goldGrad)" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Spiral light core -->
+  <circle cx="200" cy="200" r="8" fill="url(#goldGrad)" filter="url(#glow)"/>
+
+  <!-- Spiral arms -->
+  <path d="M200,200 Q210,195 215,200 Q225,210 220,218 Q215,230 205,232 Q190,235 185,225 Q178,210 190,202 Q200,195 215,198 Q235,203 240,215 Q248,232 235,242 Q218,255 200,248 Q175,240 168,220 Q158,195 180,182 Q205,170 230,180 Q260,195 268,220 Q278,255 255,272 Q225,292 195,280 Q155,265 140,235 Q120,195 150,168 Q185,142 220,158 Q265,180 278,218 Q295,270 258,298 Q215,328 175,308 Q125,285 108,245 Q85,190 125,155 Q172,118 218,140 Q275,170 292,220"
+        fill="none" stroke="url(#goldGrad)" stroke-width="2" stroke-linecap="round" opacity="0.8" filter="url(#glow)"/>
+
+  <!-- Second spiral -->
+  <path d="M200,200 Q205,198 208,202 Q212,208 208,212 Q204,218 198,215 Q192,212 190,206 Q188,198 194,195 Q202,191 210,196 Q218,202 216,212 Q212,224 202,225 Q190,226 185,216 Q178,204 188,195 Q200,186 214,192 Q230,200 228,216 Q225,235 210,240 Q192,246 182,232 Q170,215 180,200"
+        fill="none" stroke="url(#goldGrad)" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Compass points -->
+  <line x1="200" y1="30" x2="200" y2="55" stroke="url(#goldGrad)" stroke-width="2" stroke-linecap="round"/>
+  <polygon points="200,20 195,40 205,40" fill="url(#goldGrad)"/>
+  <line x1="370" y1="200" x2="345" y2="200" stroke="url(#goldGrad)" stroke-width="2" stroke-linecap="round"/>
+  <polygon points="380,200 360,195 360,205" fill="url(#goldGrad)"/>
+  <line x1="200" y1="370" x2="200" y2="345" stroke="url(#goldGrad)" stroke-width="2" stroke-linecap="round"/>
+  <polygon points="200,380 195,360 205,360" fill="url(#goldGrad)"/>
+  <line x1="30" y1="200" x2="55" y2="200" stroke="url(#goldGrad)" stroke-width="2" stroke-linecap="round"/>
+  <polygon points="20,200 40,195 40,205" fill="url(#goldGrad)"/>
+
+  <!-- Outer ring with zodiac dots -->
+  <circle cx="200" cy="200" r="140" fill="none" stroke="url(#goldGrad)" stroke-width="0.8" opacity="0.3" stroke-dasharray="4 8"/>
+  <circle cx="200" cy="200" r="155" fill="none" stroke="url(#goldGrad)" stroke-width="0.5" opacity="0.15" stroke-dasharray="2 12"/>
+
+  <!-- Zodiac markers -->
+  <g fill="url(#goldGrad)" opacity="0.6">
+    <circle cx="200" cy="60" r="2.5"/>
+    <circle cx="270" cy="80" r="2"/>
+    <circle cx="330" cy="130" r="2.5"/>
+    <circle cx="350" cy="200" r="2"/>
+    <circle cx="330" cy="270" r="2.5"/>
+    <circle cx="270" cy="320" r="2"/>
+    <circle cx="200" cy="340" r="2.5"/>
+    <circle cx="130" cy="320" r="2"/>
+    <circle cx="70" cy="270" r="2.5"/>
+    <circle cx="50" cy="200" r="2"/>
+    <circle cx="70" cy="130" r="2.5"/>
+    <circle cx="130" cy="80" r="2"/>
+  </g>
+
+  <circle cx="120" cy="120" r="1" fill="#e2b857" opacity="0.4"/>
+  <circle cx="280" cy="100" r="1" fill="#e2b857" opacity="0.3"/>
+  <circle cx="300" cy="300" r="1.5" fill="#e2b857" opacity="0.4"/>
+  <circle cx="100" cy="280" r="1" fill="#e2b857" opacity="0.3"/>
+  <circle cx="160" cy="150" r="0.8" fill="#e2b857" opacity="0.5"/>
+  <circle cx="250" cy="140" r="0.8" fill="#e2b857" opacity="0.4"/>
+  <circle cx="260" cy="260" r="0.8" fill="#e2b857" opacity="0.5"/>
+  <circle cx="140" cy="250" r="0.8" fill="#e2b857" opacity="0.4"/>
+</svg>

@@ -7,6 +7,16 @@ import {
   CheckCircle, AlertCircle, Coffee, Eye, Heart
 } from 'lucide-react'
 import './App.css'
+import CosmicBackground from './CosmicBackground.jsx'
+
+// Brand assets (imported for bundler awareness; referenced by URL in img tags)
+import catabolicMorning from './assets/catabolic-morning.png'
+import hybridMidday from './assets/hybrid-midday.png'
+import anabolicEvening from './assets/anabolic-evening.png'
+import sealingNight from './assets/sealing-night.png'
+import signalDust from './assets/signal-dust.png'
+import furnacePaste from './assets/furnace-paste.png'
+import brothCubes from './assets/broth-cubes.png'
 
 // Import real astrological calculation engine
 import { 
@@ -149,10 +159,18 @@ function App() {
 
   return (
     <>
+      {/* Cosmic Background */}
+      <div className="cosmic-bg">
+        <CosmicBackground />
+      </div>
+      <div className="cosmic-orb cosmic-orb-1"></div>
+      <div className="cosmic-orb cosmic-orb-2"></div>
+      <div className="cosmic-orb cosmic-orb-3"></div>
+
       {/* Navigation */}
       <nav className="nav-bar">
         <div className="brand" onClick={() => setActiveTab('landing')} style={{ cursor: 'pointer' }}>
-          <Compass className="brand-symbol" size={28} />
+          <img src="/logo.svg" alt="Spiral Lightfood" width="32" height="32" style={{ filter: 'drop-shadow(0 0 6px #e2b857)' }} />
           <span className="brand-font">SPIRAL LIGHTFOOD</span>
         </div>
         
@@ -178,6 +196,35 @@ function App() {
           <div>
             {/* Hero Section */}
             <header className="hero-section">
+              {/* Rotating Zodiac Wheel background */}
+              <svg className="hero-zodiac-wheel" viewBox="0 0 800 800" fill="none">
+                <circle cx="400" cy="400" r="380" stroke="#e2b857" strokeWidth="1" opacity="0.5" strokeDasharray="8 16"/>
+                <circle cx="400" cy="400" r="350" stroke="#e2b857" strokeWidth="0.5" opacity="0.3" strokeDasharray="4 20"/>
+                <circle cx="400" cy="400" r="320" stroke="#e2b857" strokeWidth="0.3" opacity="0.15"/>
+                <g opacity="0.6">
+                  <text x="400" y="60" textAnchor="middle" fill="#e2b857" fontSize="20" fontFamily="Cinzel">♈</text>
+                  <text x="660" y="410" textAnchor="middle" fill="#e2b857" fontSize="20" fontFamily="Cinzel">♌</text>
+                  <text x="400" y="760" textAnchor="middle" fill="#e2b857" fontSize="20" fontFamily="Cinzel">♎</text>
+                  <text x="140" y="410" textAnchor="middle" fill="#e2b857" fontSize="20" fontFamily="Cinzel">♑</text>
+                  <text x="560" y="140" textAnchor="middle" fill="#e2b857" fontSize="16" fontFamily="Cinzel">♊</text>
+                  <text x="580" y="680" textAnchor="middle" fill="#e2b857" fontSize="16" fontFamily="Cinzel">♐</text>
+                  <text x="220" y="140" textAnchor="middle" fill="#e2b857" fontSize="16" fontFamily="Cinzel">♉</text>
+                  <text x="240" y="680" textAnchor="middle" fill="#e2b857" fontSize="16" fontFamily="Cinzel">♏</text>
+                </g>
+              </svg>
+              
+              {/* Hero decorative particles */}
+              <div className="hero-particle"></div>
+              <div className="hero-particle"></div>
+              <div className="hero-particle"></div>
+              <div className="hero-particle"></div>
+              <div className="hero-particle"></div>
+              <div className="hero-particle"></div>
+              <div className="hero-particle"></div>
+              <div className="hero-particle"></div>
+              <div className="hero-particle"></div>
+              <div className="hero-particle"></div>
+
               <span className="hero-tag">A Personalized Ingestion Doctrine</span>
               <h1 className="hero-title">
                 Align Your Natal Chart With 
@@ -234,11 +281,14 @@ function App() {
               </p>
               
               <div className="rhythm-timeline">
-                {/* Node 1 */}
+                {/* Node 1 - Catabolic Morning */}
                 <div className="rhythm-node">
-                  <div className="rhythm-header">
-                    <div className="rhythm-time"><Sun size={20} /> 06:00 - 11:00</div>
-                    <h3 className="rhythm-name">Catabolic Morning</h3>
+                  <div className="rhythm-header" style={{ backgroundImage: `url(${catabolicMorning})`, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                      <div className="rhythm-time"><Sun size={20} /> 06:00 - 11:00</div>
+                      <h3 className="rhythm-name">Catabolic Morning</h3>
+                    </div>
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(13,12,21,0.6)', zIndex: 0 }}></div>
                   </div>
                   <div className="rhythm-body">
                     <div className="rhythm-focus">Focus: Cellular Release & Autophagy Cleansing</div>
@@ -258,11 +308,14 @@ function App() {
                   </div>
                 </div>
 
-                {/* Node 2 */}
+                {/* Node 2 - Hybrid Midday */}
                 <div className="rhythm-node">
-                  <div className="rhythm-header">
-                    <div className="rhythm-time"><Flame size={20} /> 11:00 - 16:00</div>
-                    <h3 className="rhythm-name">Hybrid Midday</h3>
+                  <div className="rhythm-header" style={{ backgroundImage: `url(${hybridMidday})`, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                      <div className="rhythm-time"><Flame size={20} /> 11:00 - 16:00</div>
+                      <h3 className="rhythm-name">Hybrid Midday</h3>
+                    </div>
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(13,12,21,0.6)', zIndex: 0 }}></div>
                   </div>
                   <div className="rhythm-body">
                     <div className="rhythm-focus">Focus: Balanced Grounding & Isoglycemic Adaptation</div>
@@ -282,11 +335,14 @@ function App() {
                   </div>
                 </div>
 
-                {/* Node 3 */}
+                {/* Node 3 - Anabolic Evening */}
                 <div className="rhythm-node">
-                  <div className="rhythm-header">
-                    <div className="rhythm-time"><Moon size={20} /> 16:00 - 21:00</div>
-                    <h3 className="rhythm-name">Anabolic Evening</h3>
+                  <div className="rhythm-header" style={{ backgroundImage: `url(${anabolicEvening})`, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                      <div className="rhythm-time"><Moon size={20} /> 16:00 - 21:00</div>
+                      <h3 className="rhythm-name">Anabolic Evening</h3>
+                    </div>
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(13,12,21,0.6)', zIndex: 0 }}></div>
                   </div>
                   <div className="rhythm-body">
                     <div className="rhythm-focus">Focus: Restorative Rebuilding & Mineral Loading</div>
@@ -306,11 +362,14 @@ function App() {
                   </div>
                 </div>
 
-                {/* Node 4 */}
+                {/* Node 4 - Sealing Night */}
                 <div className="rhythm-node">
-                  <div className="rhythm-header">
-                    <div className="rhythm-time"><Lock size={20} /> 21:00 - 06:00</div>
-                    <h3 className="rhythm-name">Sealing Night</h3>
+                  <div className="rhythm-header" style={{ backgroundImage: `url(${sealingNight})`, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                      <div className="rhythm-time"><Lock size={20} /> 21:00 - 06:00</div>
+                      <h3 className="rhythm-name">Sealing Night</h3>
+                    </div>
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(13,12,21,0.6)', zIndex: 0 }}></div>
                   </div>
                   <div className="rhythm-body">
                     <div className="rhythm-focus">Focus: Gut Sealing & Autonomic Nervous Transition</div>
@@ -369,7 +428,7 @@ function App() {
 
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <div className="safety-seal-box">
-                  <Compass size={60} className="brand-symbol" />
+                  <img src="/logo.svg" alt="" width="60" height="60" style={{ filter: 'drop-shadow(0 0 8px rgba(226, 184, 87, 0.5))' }} />
                   <div className="seal-title">NZ MPI ALIGNED</div>
                   <p className="seal-desc">This system matches certified food safety standards and New Zealand botanical handling regulations, ensuring clean, non-toxic prep.</p>
                   <div style={{ fontSize: '0.75rem', color: '#34d399', fontWeight: 'bold', marginTop: '1rem', border: '1px solid #34d399', padding: '0.25rem 0.5rem', borderRadius: '4px' }}>SAFETY CERTIFIED</div>
@@ -763,6 +822,21 @@ function App() {
                   <div className="module-pages">Pages 29-36</div>
                 </div>
 
+                <div className="apothecary-preview">
+                  <div className="apothecary-item">
+                    <img src={signalDust} alt="Signal Dust" />
+                    <span>Signal Dust</span>
+                  </div>
+                  <div className="apothecary-item">
+                    <img src={furnacePaste} alt="Furnace Paste" />
+                    <span>Furnace Paste</span>
+                  </div>
+                  <div className="apothecary-item">
+                    <img src={brothCubes} alt="Broth Cubes" />
+                    <span>Broth Cubes</span>
+                  </div>
+                </div>
+
                 <div className="module-row">
                   <div className="module-num">V</div>
                   <div className="module-info">
@@ -930,7 +1004,7 @@ function App() {
       <footer className="footer">
         <div className="footer-content">
           <div className="footer-brand">
-            <Compass className="brand-symbol" size={24} />
+            <img src="/logo.svg" alt="" width="24" height="24" style={{ filter: 'drop-shadow(0 0 4px rgba(226, 184, 87, 0.5))' }} />
             <span className="brand-font" style={{ fontSize: '1.2rem' }}>SPIRAL LIGHTFOOD</span>
           </div>
           <p className="footer-desc">
