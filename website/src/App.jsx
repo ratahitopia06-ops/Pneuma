@@ -4,7 +4,7 @@ import {
   CreditCard, Download, BookOpen, ShieldCheck, 
   Calendar, Flame, Droplets, Wind, Mountain, 
   Menu, X, ChevronRight, ArrowRight, Lock, 
-  CheckCircle, AlertCircle, Coffee, Eye, Heart
+  CheckCircle, AlertCircle, Coffee, Eye, Heart, Share2
 } from 'lucide-react'
 import './App.css'
 import CosmicBackground from './CosmicBackground.jsx'
@@ -28,7 +28,31 @@ import {
 function App() {
   const [activeTab, setActiveTab] = useState('landing');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+  const [shareTooltip, setShareTooltip] = useState('');
+
+  const SITE_URL = 'https://ratahitopia06-ops.github.io/Pneuma/';
+  const SHARE_TEXT = 'Spiral Lightfood — Personalized Ingestion Doctrine: Align your natal chart with the Fourfold Day eating rhythm.';
+
+  const shareOnTwitter = () => {
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(SHARE_TEXT)}&url=${encodeURIComponent(SITE_URL)}`;
+    window.open(url, '_blank', 'noopener,noreferrer,width=600,height=400');
+  };
+
+  const shareOnFacebook = () => {
+    const url = `https://facebook.com/sharer/sharer.php?u=${encodeURIComponent(SITE_URL)}&quote=${encodeURIComponent(SHARE_TEXT)}`;
+    window.open(url, '_blank', 'noopener,noreferrer,width=600,height=400');
+  };
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(SITE_URL).then(() => {
+      setShareTooltip('Link copied!');
+      setTimeout(() => setShareTooltip(''), 2000);
+    }).catch(() => {
+      setShareTooltip('Failed to copy');
+      setTimeout(() => setShareTooltip(''), 2000);
+    });
+  };
+
   // Form State
   const [formData, setFormData] = useState({
     name: '',
@@ -1017,6 +1041,30 @@ function App() {
             <span className="footer-link" onClick={() => setActiveTab('post-purchase')}>Download Center</span>
             <a href="https://buy.stripe.com/bJefZhemgc3i2Zb3tGfnO00" target="_blank" rel="noopener noreferrer" className="footer-link">Payment Link</a>
           </div>
+
+          {/* Social Share Bar */}
+          <div className="footer-share-bar">
+            <span className="share-label">Share the Doctrine</span>
+            <div className="share-buttons">
+              <button className="share-btn" onClick={shareOnTwitter} aria-label="Share on Twitter/X">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+                <span>X</span>
+              </button>
+              <button className="share-btn" onClick={shareOnFacebook} aria-label="Share on Facebook">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                <span>Facebook</span>
+              </button>
+              <button className="share-btn share-btn-copy" onClick={copyLink} aria-label="Copy link to clipboard">
+                <Share2 size={18} />
+                <span>{shareTooltip || 'Copy Link'}</span>
+              </button>
+            </div>
+          </div>
+
           <div className="footer-copyright">
             © {new Date().getFullYear()} Spiral Lightfood Ltd. Auckland, New Zealand. All rights reserved. Registered Food safety operator standards apply.
           </div>

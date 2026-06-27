@@ -1333,6 +1333,85 @@
 }
 
 /* ============================================
+   SOCIAL SHARE BAR (footer)
+   ============================================ */
+.footer-share-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin: 0 auto 2.5rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--glass-border);
+  max-width: 400px;
+}
+
+.share-label {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.share-buttons {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.share-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  color: var(--text-light);
+  font-family: var(--body-sans);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.share-btn:hover {
+  border-color: rgba(226, 184, 87, 0.3);
+  color: var(--text-gold);
+  background: rgba(226, 184, 87, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.share-btn svg {
+  transition: all 0.3s ease;
+}
+
+.share-btn:hover svg {
+  color: var(--text-gold);
+}
+
+.share-btn-copy {
+  min-width: 110px;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .share-btn span {
+    display: none;
+  }
+  .share-btn {
+    padding: 0.5rem;
+    min-width: auto;
+  }
+  .share-btn-copy span {
+    display: inline;
+    font-size: 0.75rem;
+  }
+}
+
+/* ============================================
    WEEKLY ROTATION SCHEDULE
    ============================================ */
 .rotation-grid {
