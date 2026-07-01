@@ -31,7 +31,7 @@ function App() {
   const [shareTooltip, setShareTooltip] = useState('');
 
   const SITE_URL = 'https://ratahitopia06-ops.github.io/Pneuma/';
-  const SHARE_TEXT = 'Spiral Lightfood — Personalized Ingestion Doctrine: Align your natal chart with the Fourfold Day eating rhythm.';
+  const SHARE_TEXT = 'Esonutra — The Esoteric Diet: Align your natal chart with the Fourfold Day eating rhythm.';
 
   const shareOnTwitter = () => {
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(SHARE_TEXT)}&url=${encodeURIComponent(SITE_URL)}`;
@@ -51,6 +51,12 @@ function App() {
       setShareTooltip('Failed to copy');
       setTimeout(() => setShareTooltip(''), 2000);
     });
+  };
+
+  const INSTAGRAM_USERNAME = 'rhespiral_lightfood';
+
+  const shareOnInstagram = () => {
+    window.open(`https://instagram.com/${INSTAGRAM_USERNAME}`, '_blank', 'noopener,noreferrer');
   };
 
   // Form State
@@ -194,8 +200,8 @@ function App() {
       {/* Navigation */}
       <nav className="nav-bar">
         <div className="brand" onClick={() => setActiveTab('landing')} style={{ cursor: 'pointer' }}>
-          <img src="/logo.svg" alt="Spiral Lightfood" width="32" height="32" style={{ filter: 'drop-shadow(0 0 6px #e2b857)' }} />
-          <span className="brand-font">SPIRAL LIGHTFOOD</span>
+          <img src="/logo.svg" alt="Esonutra" width="32" height="32" style={{ filter: 'drop-shadow(0 0 6px #e2b857)' }} />
+          <span className="brand-font">ESONUTRA</span>
         </div>
         
         {/* Desktop Links */}
@@ -249,7 +255,7 @@ function App() {
               <div className="hero-particle"></div>
               <div className="hero-particle"></div>
 
-              <span className="hero-tag">A Personalized Ingestion Doctrine</span>
+              <span className="hero-tag">A The Esoteric Diet</span>
               <h1 className="hero-title">
                 Align Your Natal Chart With 
                 <span>THE FOURFOLD DAY</span>
@@ -423,7 +429,7 @@ function App() {
                 </div>
                 <h2>A Grounded Safety Layer</h2>
                 <p className="hero-subtitle" style={{ fontSize: '1.05rem', margin: '0 0 1.5rem', textAlign: 'left' }}>
-                  Spiral Lightfood is a synthesis of cosmic timing and strict modern physical safety. Our systems are fully grounded in New Zealand Ministry for Primary Industries (NZ MPI) and Health New Zealand standards to ensure somatic protection.
+                  Esonutra is a synthesis of cosmic timing and strict modern physical safety. Our systems are fully grounded in New Zealand Ministry for Primary Industries (NZ MPI) and Health New Zealand standards to ensure somatic protection.
                 </p>
                 <ul className="safety-list">
                   <li className="safety-item">
@@ -760,6 +766,39 @@ function App() {
                 </div>
               </div>
 
+              {/* Share-to-Save Discount CTA */}
+              <div className="share-save-box">
+                <div className="share-save-header">
+                  <Share2 size={20} />
+                  <span>Share your blueprint and save $5</span>
+                </div>
+                <p className="share-save-desc">
+                  Share your personalized blueprint with friends and use code <strong>FOURFOLD10</strong> at checkout to save 10%.
+                </p>
+                <div className="share-save-buttons">
+                  <button className="share-btn" onClick={shareOnTwitter} aria-label="Share on Twitter/X">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    <span>Share on X</span>
+                  </button>
+                  <button className="share-btn" onClick={shareOnFacebook} aria-label="Share on Facebook">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                    <span>Share on Facebook</span>
+                  </button>
+                  <button className="share-btn share-btn-copy" onClick={copyLink} aria-label="Copy link">
+                    <Share2 size={16} />
+                    <span>{shareTooltip || 'Copy Link'}</span>
+                  </button>
+                </div>
+                <div className="share-save-code">
+                  <span className="discount-code-label">Discount Code:</span>
+                  <span className="discount-code">FOURFOLD10</span>
+                </div>
+              </div>
+
               <span className="retrieve-report-link" onClick={() => setActiveTab('post-purchase')}>
                 Already purchased? Click here to access your report download instantly.
               </span>
@@ -879,12 +918,12 @@ function App() {
                 </p>
                 <a 
                   href="/sample-compendium.pdf" 
-                  download="Spiral_Lightfood_Personal_Compendium.pdf"
+                  download="Esonutra_Personal_Compendium.pdf"
                   className="btn-download"
                   onClick={(e) => {
                     // Prevent standard download since file doesn't actually exist on disk, we simulate it!
                     e.preventDefault();
-                    alert("✨ Your 42-page astrological ingestion manual is compiling! Your download (Spiral_Lightfood_Personal_Compendium.pdf) will begin shortly. A copy has also been dispatched to your checkout email. ✨");
+                    alert("✨ Your 42-page astrological ingestion manual is compiling! Your download (Esonutra_Personal_Compendium.pdf) will begin shortly. A copy has also been dispatched to your checkout email. ✨");
                   }}
                 >
                   DOWNLOAD COMPLETE COMPENDIUM (8.4 MB)
@@ -1029,7 +1068,7 @@ function App() {
         <div className="footer-content">
           <div className="footer-brand">
             <img src="/logo.svg" alt="" width="24" height="24" style={{ filter: 'drop-shadow(0 0 4px rgba(226, 184, 87, 0.5))' }} />
-            <span className="brand-font" style={{ fontSize: '1.2rem' }}>SPIRAL LIGHTFOOD</span>
+            <span className="brand-font" style={{ fontSize: '1.2rem' }}>ESONUTRA</span>
           </div>
           <p className="footer-desc">
             A spiritual-somatic mapping system treating birth gate placements as the correction layer for physical and metaphysical wellness. Compliant with NZ MPI food safety standards.
@@ -1042,31 +1081,9 @@ function App() {
             <a href="https://buy.stripe.com/bJefZhemgc3i2Zb3tGfnO00" target="_blank" rel="noopener noreferrer" className="footer-link">Payment Link</a>
           </div>
 
-          {/* Social Share Bar */}
-          <div className="footer-share-bar">
-            <span className="share-label">Share the Doctrine</span>
-            <div className="share-buttons">
-              <button className="share-btn" onClick={shareOnTwitter} aria-label="Share on Twitter/X">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-                <span>X</span>
-              </button>
-              <button className="share-btn" onClick={shareOnFacebook} aria-label="Share on Facebook">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                </svg>
-                <span>Facebook</span>
-              </button>
-              <button className="share-btn share-btn-copy" onClick={copyLink} aria-label="Copy link to clipboard">
-                <Share2 size={18} />
-                <span>{shareTooltip || 'Copy Link'}</span>
-              </button>
-            </div>
-          </div>
 
           <div className="footer-copyright">
-            © {new Date().getFullYear()} Spiral Lightfood Ltd. Auckland, New Zealand. All rights reserved. Registered Food safety operator standards apply.
+            © {new Date().getFullYear()} Esonutra Ltd. Auckland, New Zealand. All rights reserved. Registered Food safety operator standards apply.
           </div>
         </div>
       </footer>

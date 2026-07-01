@@ -1,5 +1,5 @@
 /**
- * Spiral Lightfood — Real Astrological Calculation Module
+ * Esonutra — Real Astrological Calculation Module
  * Uses astronomy-engine (VSOP87-based) for accurate ephemeris calculations.
  * 
  * Functions:
@@ -252,7 +252,7 @@ export async function geocodeLocation(locationText) {
     const response = await fetch(url, {
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'SpiralLightfood/1.0'
+        'User-Agent': 'Esonutra/1.0'
       }
     });
 
