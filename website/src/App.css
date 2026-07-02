@@ -1078,6 +1078,88 @@
   margin-top: 1rem;
 }
 
+/* Share-to-Save Discount CTA */
+.share-save-box {
+  background: linear-gradient(135deg, rgba(226, 184, 87, 0.06) 0%, rgba(20, 18, 38, 0.4) 100%);
+  border: 1px solid rgba(226, 184, 87, 0.2);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  margin-top: 2rem;
+  transition: all 0.3s ease;
+}
+
+.share-save-box:hover {
+  border-color: rgba(226, 184, 87, 0.35);
+  box-shadow: 0 0 20px rgba(226, 184, 87, 0.04);
+}
+
+.share-save-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: var(--text-gold);
+  font-family: var(--sans);
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.share-save-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0 auto 1.25rem;
+  max-width: 500px;
+}
+
+.share-save-desc strong {
+  color: var(--text-gold);
+  font-weight: 700;
+}
+
+.share-save-buttons {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.share-save-buttons .share-btn {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.8rem;
+}
+
+.share-save-code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(226, 184, 87, 0.06);
+  border: 1px dashed rgba(226, 184, 87, 0.3);
+  border-radius: 8px;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.discount-code-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.discount-code {
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-gold);
+  letter-spacing: 0.08em;
+}
+
 .retrieve-report-link {
   display: block;
   text-align: center;
