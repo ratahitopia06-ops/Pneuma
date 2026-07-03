@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { 
   Compass, Sun, Moon, Sparkles, Clock, MapPin, Target, Globe,
   CreditCard, Download, BookOpen, ShieldCheck, 
@@ -29,6 +29,53 @@ function App() {
   const [activeTab, setActiveTab] = useState('landing');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [shareTooltip, setShareTooltip] = useState('');
+  const [pageLoaded, setPageLoaded] = useState(false);
+  const [tabTransitioning, setTabTransitioning] = useState(false);
+
+  // Page load entrance animation
+  useEffect(() => {
+    setPageLoaded(true);
+  }, []);
+
+  // IntersectionObserver for scroll-triggered reveals
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
+    );
+
+    const elements = document.querySelectorAll(
+      '.fade-in-up, .fade-in-left, .fade-in-right, .fade-in-scale'
+    );
+
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [activeTab]);
+
+  // Parallax effect on hero scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const hero = document.querySelector('.hero-section');
+      if (!hero) return;
+      const scrollY = window.scrollY;
+      const parallaxElements = hero.querySelectorAll('.parallax-container');
+      parallaxElements.forEach((el) => {
+        const speed = el.dataset.speed || 0.15;
+        el.style.transform = `translateY(${scrollY * speed}px)`;
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const SITE_URL = 'https://00f5400b642158d415ced27cbc4727f9.ctonew.app';
   const SHARE_TEXT = 'Esonutra — The Esoteric Diet: Align your natal chart with the Fourfold Day eating rhythm.';
@@ -187,6 +234,54 @@ function App() {
     setActiveTab('intake');
   };
 
+  // Ripple effect on buttons
+  const createRipple = (e) => {
+    const button = e.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = e.clientX - rect.left - size / 2;
+    const y = e.clientY - rect.top - size / 2;
+
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple-effect';
+    ripple.style.width = ripple.style.height = `${size}px`;
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+
+    button.appendChild(ripple);
+    ripple.addEventListener('animationend', () => ripple.remove());
+  };
+
+  // Tab transition with smooth fade
+  const transitionToTab = (tab) => {
+    if (tab === activeTab) return;
+    setTabTransitioning(true);
+    setTimeout(() => {
+      setActiveTab(tab);
+      setTimeout(() => {
+        setTabTransitioning(false);
+      }, 50);
+    }, 200);
+  };
+
+  // 3D Tilt effect for cards
+  const handleCardMouseMove = (e) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = (y - centerY) / centerY * -8;
+    const rotateY = (x - centerX) / centerX * 8;
+    card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  };
+
+  const handleCardMouseLeave = (e) => {
+    const card = e.currentTarget;
+    card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg)';
+  };
+
   return (
     <>
       {/* Cosmic Background */}
@@ -198,7 +293,7 @@ function App() {
       <div className="cosmic-orb cosmic-orb-3"></div>
 
       {/* Navigation */}
-      <nav className="nav-bar">
+      <nav className={`nav-bar page-entrance entrance-nav ${pageLoaded ? 'loaded' : ''}`}>
         <div className="brand" onClick={() => setActiveTab('landing')} style={{ cursor: 'pointer' }}>
           <img src="/Pneuma/logo.svg" alt="Esonutra" width="32" height="32" style={{ filter: 'drop-shadow(0 0 6px #e2b857)' }} />
           <span className="brand-font">ESONUTRA</span>
@@ -206,26 +301,27 @@ function App() {
         
         {/* Desktop Links */}
         <div className="nav-links">
-          <span className={`nav-link ${activeTab === 'landing' ? 'active' : ''}`} onClick={() => setActiveTab('landing')}>The Doctrine</span>
-          <span className={`nav-link ${activeTab === 'rotation' ? 'active' : ''}`} onClick={() => setActiveTab('rotation')}>Weekly Rotation</span>
+          <span className={`nav-link ${activeTab === 'landing' ? 'active' : ''}`} onClick={() => transitionToTab('landing')}>The Doctrine</span>
+          <span className={`nav-link ${activeTab === 'rotation' ? 'active' : ''}`} onClick={() => transitionToTab('rotation')}>Weekly Rotation</span>
           <span className={`nav-link ${activeTab === 'intake' || activeTab === 'blueprint' ? 'active' : ''}`} onClick={() => {
-            if (chartResult) setActiveTab('blueprint');
-            else setActiveTab('intake');
+            if (chartResult) transitionToTab('blueprint');
+            else transitionToTab('intake');
           }}>Natal Intake</span>
-          <span className={`nav-link ${activeTab === 'post-purchase' ? 'active' : ''}`} onClick={() => setActiveTab('post-purchase')}>Report Retrieval</span>
-          <button className="cta-nav-button" onClick={() => {
-            if (chartResult) setActiveTab('blueprint');
-            else setActiveTab('intake');
+          <span className={`nav-link ${activeTab === 'post-purchase' ? 'active' : ''}`} onClick={() => transitionToTab('post-purchase')}>Report Retrieval</span>
+          <button className="cta-nav-button btn-pulse" onClick={(e) => {
+            createRipple(e);
+            if (chartResult) transitionToTab('blueprint');
+            else transitionToTab('intake');
           }}>GET YOUR CHART</button>
         </div>
       </nav>
 
-      <div className="page-container">
+      <div className={`page-container ${tabTransitioning ? 'tab-transition' : 'tab-transition active'}`}>
         {/* LANDING PAGE VIEW */}
         {activeTab === 'landing' && (
           <div>
             {/* Hero Section */}
-            <header className="hero-section">
+            <header className={`hero-section page-entrance entrance-hero ${pageLoaded ? 'loaded' : ''}`}>
               {/* Rotating Zodiac Wheel background */}
               <svg className="hero-zodiac-wheel" viewBox="0 0 800 800" fill="none">
                 <circle cx="400" cy="400" r="380" stroke="#e2b857" strokeWidth="1" opacity="0.5" strokeDasharray="8 16"/>
@@ -264,10 +360,14 @@ function App() {
                 An advanced nutritional alignment system mapping birth gate placements and planetary times to a highly precise recipe canon, balancing your somatic correction layer and deep bodily gates.
               </p>
               <div className="hero-ctas">
-                <button className="btn-primary" onClick={() => setActiveTab('intake')}>
+                <button className="btn-primary btn-pulse" onClick={(e) => {
+                  createRipple(e);
+                  transitionToTab('intake');
+                }}>
                   Begin Natal Chart Intake <ArrowRight size={18} />
                 </button>
-                <button className="btn-secondary" onClick={() => {
+                <button className="btn-secondary" onClick={(e) => {
+                  createRipple(e);
                   const element = document.getElementById('doctrine');
                   element?.scrollIntoView({ behavior: 'smooth' });
                 }}>
@@ -277,23 +377,23 @@ function App() {
             </header>
 
             {/* Core Value Props Grid */}
-            <section style={{ margin: '4rem 0' }}>
+            <section className="page-entrance entrance-content" style={{ margin: '4rem 0' }}>
               <div className="grid-cards">
-                <div className="card">
+                <div className="card" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
                   <Sparkles className="card-icon" size={36} />
                   <h3 className="card-title">Astral Correction Layer</h3>
                   <p className="card-description">
                     Unlike generic diets, we calculate planetary alignments at your moment of birth to identify structural body gate blockages, correcting the foundational somatic layer first.
                   </p>
                 </div>
-                <div className="card">
+                <div className="card" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
                   <Clock className="card-icon" size={36} />
                   <h3 className="card-title">Planetary Meal Timing</h3>
                   <p className="card-description">
                     The Fourfold Day divides your eating rhythm into four distinct biological gates (Catabolic, Hybrid, Anabolic, and Sealing), aligned with planetary hour rotations for optimal assimilation.
                   </p>
                 </div>
-                <div className="card">
+                <div className="card" onMouseMove={handleCardMouseMove} onMouseLeave={handleCardMouseLeave}>
                   <BookOpen className="card-icon" size={36} />
                   <h3 className="card-title">Custom Compendium</h3>
                   <p className="card-description">
@@ -304,7 +404,7 @@ function App() {
             </section>
 
             {/* The Fourfold Day Doctrine Section */}
-            <section id="doctrine" className="doctrine-section">
+            <section id="doctrine" className="doctrine-section fade-in-up">
               <h2 className="section-title">THE FOURFOLD DAY</h2>
               <p className="section-intro">
                 Metabolism is not static; it is an elemental pendulum. By structuring our eating window around the four distinct quarters of the day, we sync somatic organs to planetary timings.
@@ -422,7 +522,7 @@ function App() {
             </section>
 
             {/* Science, Standards & Safety Layer Section */}
-            <section className="safety-section">
+            <section className="safety-section fade-in-up">
               <div className="safety-content">
                 <div className="safety-badge">
                   <ShieldCheck size={16} /> RIGOROUS SCIENCE & STANDARDS
@@ -467,13 +567,16 @@ function App() {
             </section>
 
             {/* CTA block */}
-            <section style={{ textAlign: 'center', margin: '6rem 0 3rem' }}>
+            <section className="fade-in-up" style={{ textAlign: 'center', margin: '6rem 0 3rem' }}>
               <div style={{ background: 'var(--bg-void)', border: '1px solid var(--border-cosmic)', borderRadius: '16px', padding: '3.5rem 2rem' }}>
                 <h2 style={{ fontSize: '2rem', margin: '0 0 1rem' }}>Discover Your Personal Eating Canon</h2>
                 <p style={{ color: 'var(--text-muted)', maxWidth: '600px', margin: '0 auto 2.5rem', lineHeight: '1.6' }}>
                   Input your exact birth details. Our alignment generator will immediately project your Sun/Ascendant Body Gate and build your path to a custom compendium.
                 </p>
-                <button className="btn-primary" style={{ marginInline: 'auto' }} onClick={() => setActiveTab('intake')}>
+                <button className="btn-primary btn-pulse" style={{ marginInline: 'auto' }} onClick={(e) => {
+                  createRipple(e);
+                  transitionToTab('intake');
+                }}>
                   Calculate My Natal Intake <Sparkles size={18} />
                 </button>
               </div>
@@ -485,7 +588,7 @@ function App() {
         {activeTab === 'intake' && (
           <div>
             {analyzingState === 0 ? (
-              <div className="intake-card">
+              <div className="intake-card fade-in-up">
                 <div className="intake-header">
                   <Compass size={40} className="brand-symbol" style={{ marginBottom: '1rem' }} />
                   <h2 className="intake-title">Natal Alignment Intake</h2>
@@ -658,7 +761,7 @@ function App() {
                     </div>
                   </div>
 
-                  <button type="submit" className="submit-button">
+                  <button type="submit" className="submit-button" onClick={createRipple}>
                     Generate My Astrological Food Blueprint <Sparkles size={18} />
                   </button>
                 </form>
@@ -667,10 +770,20 @@ function App() {
               /* Analyzing State */
               <div className="blueprint-card">
                 <div className="loading-box">
-                  <div className="spinner"></div>
+                  <div className="loading-visual">
+                    <div className="loading-ring"></div>
+                    <div className="loading-ring"></div>
+                    <div className="loading-ring"></div>
+                    <div className="loading-orb"></div>
+                    <div className="loading-orb"></div>
+                    <div className="loading-orb"></div>
+                  </div>
                   <h3 className="loading-title">CALCULATING ALIGNMENTS</h3>
                   <p className="loading-status">{analyzingText}</p>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '400px', marginTop: '1rem' }}>
+                  <div className="loading-progress-bar">
+                    <div className="loading-progress-fill"></div>
+                  </div>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '400px', marginTop: '1.5rem' }}>
                     Securing safe botanical calibrations according to NZ food rules...
                   </p>
                 </div>
@@ -752,11 +865,11 @@ function App() {
                 </ul>
 
                 {/* Secure Stripe link */}
-                <a 
-                  href="https://buy.stripe.com/bJefZhemgc3i2Zb3tGfnO00" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="stripe-btn"
+                <a
+                  href="https://buy.stripe.com/bJefZhemgc3i2Zb3tGfnO00"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="stripe-btn btn-pulse"
                 >
                   <CreditCard size={20} /> PURCHASE REPORT SECURELY VIA STRIPE
                 </a>
@@ -799,11 +912,14 @@ function App() {
                 </div>
               </div>
 
-              <span className="retrieve-report-link" onClick={() => setActiveTab('post-purchase')}>
+              <span className="retrieve-report-link" onClick={() => transitionToTab('post-purchase')}>
                 Already purchased? Click here to access your report download instantly.
               </span>
 
-              <button className="btn-secondary" style={{ width: '100%', marginTop: '1.5rem' }} onClick={handleResetIntake}>
+              <button className="btn-secondary" style={{ width: '100%', marginTop: '1.5rem' }} onClick={(e) => {
+                createRipple(e);
+                handleResetIntake();
+              }}>
                 ← Return to intake form
               </button>
             </div>
@@ -921,8 +1037,8 @@ function App() {
                   download="Esonutra_Personal_Compendium.pdf"
                   className="btn-download"
                   onClick={(e) => {
-                    // Prevent standard download since file doesn't actually exist on disk, we simulate it!
                     e.preventDefault();
+                    createRipple(e);
                     alert("✨ Your 42-page astrological ingestion manual is compiling! Your download (Esonutra_Personal_Compendium.pdf) will begin shortly. A copy has also been dispatched to your checkout email. ✨");
                   }}
                 >
@@ -936,7 +1052,7 @@ function App() {
         {/* WEEKLY CELESTIAL ROTATION VIEW */}
         {activeTab === 'rotation' && (
           <div>
-            <div className="rotation-intro-box">
+            <div className="rotation-intro-box fade-in-up">
               <Calendar className="brand-symbol" size={40} style={{ marginBottom: '1rem' }} />
               <h2 className="rotation-intro-title">Weekly Celestial Rotation</h2>
               <p className="rotation-intro-desc">
@@ -1053,7 +1169,10 @@ function App() {
                   <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ffffff', fontFamily: 'var(--sans)' }}>
                     $9.00 <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>/ week</span>
                   </div>
-                  <button className="btn-primary" onClick={() => window.open('https://buy.stripe.com/bJefZhemgc3i2Zb3tGfnO00', '_blank')}>
+                  <button className="btn-primary btn-pulse" onClick={(e) => {
+                    createRipple(e);
+                    window.open('https://buy.stripe.com/bJefZhemgc3i2Zb3tGfnO00', '_blank');
+                  }}>
                     Subscribe Weekly <CreditCard size={18} />
                   </button>
                 </div>
@@ -1074,10 +1193,10 @@ function App() {
             A spiritual-somatic mapping system treating birth gate placements as the correction layer for physical and metaphysical wellness. Compliant with NZ MPI food safety standards.
           </p>
           <div className="footer-links">
-            <span className="footer-link" onClick={() => setActiveTab('landing')}>Doctrine</span>
-            <span className="footer-link" onClick={() => setActiveTab('rotation')}>Weekly Rotation</span>
-            <span className="footer-link" onClick={() => setActiveTab('intake')}>Natal Intake</span>
-            <span className="footer-link" onClick={() => setActiveTab('post-purchase')}>Download Center</span>
+            <span className="footer-link" onClick={() => transitionToTab('landing')}>Doctrine</span>
+            <span className="footer-link" onClick={() => transitionToTab('rotation')}>Weekly Rotation</span>
+            <span className="footer-link" onClick={() => transitionToTab('intake')}>Natal Intake</span>
+            <span className="footer-link" onClick={() => transitionToTab('post-purchase')}>Download Center</span>
             <a href="https://buy.stripe.com/bJefZhemgc3i2Zb3tGfnO00" target="_blank" rel="noopener noreferrer" className="footer-link">Payment Link</a>
           </div>
 

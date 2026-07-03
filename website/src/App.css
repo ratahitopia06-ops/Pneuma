@@ -270,16 +270,24 @@
   align-items: center;
   gap: 0.75rem;
   white-space: nowrap;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 32px rgba(226, 184, 87, 0.4);
   filter: brightness(1.1);
+  animation: none;
 }
 
 .btn-primary:active {
   transform: translateY(0);
+}
+
+/* Gentle pulse animation for primary CTAs */
+.btn-pulse {
+  animation: pulse-glow 2.5s ease-in-out infinite;
 }
 
 .btn-secondary {
@@ -293,6 +301,8 @@
   border: 1px solid var(--border-cosmic);
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-secondary:hover {
@@ -371,6 +381,17 @@
   opacity: 1;
 }
 
+/* 3D Tilt card container */
+.card-tilt {
+  perspective: 800px;
+}
+
+.card-tilt-inner {
+  transition: transform 0.15s ease-out;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
 .card-icon {
   color: var(--text-gold);
   margin-bottom: 1.5rem;
@@ -378,7 +399,7 @@
 }
 
 .card:hover .card-icon {
-  transform: scale(1.1);
+  transform: scale(1.1) rotate(5deg);
   filter: drop-shadow(0 0 8px rgba(226, 184, 87, 0.4));
 }
 
@@ -803,33 +824,48 @@
   text-align: center;
 }
 
-.spinner {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  border: 2px solid rgba(226, 184, 87, 0.1);
-  border-top-color: var(--text-gold);
-  animation: spin 1.2s cubic-bezier(0.5, 0.1, 0.15, 1) infinite;
+/* Cinematic loading animation */
+.loading-visual {
   position: relative;
+  width: 120px;
+  height: 120px;
   margin-bottom: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.spinner::before {
-  content: '';
+.loading-orb {
   position: absolute;
-  top: 6px;
-  left: 6px;
-  right: 6px;
-  bottom: 6px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  border: 1px solid rgba(216, 180, 254, 0.1);
-  border-bottom-color: var(--text-lavender);
-  animation: spin 2.4s linear infinite reverse;
+  background: var(--text-gold);
+  filter: blur(2px);
+  animation: loading-orb 1.8s ease-in-out infinite;
 }
+
+.loading-orb:nth-child(1) { animation-delay: 0s; top: 50%; left: 50%; margin: -12px; }
+.loading-orb:nth-child(2) { animation-delay: 0.6s; width: 16px; height: 16px; background: var(--text-lavender); }
+.loading-orb:nth-child(3) { animation-delay: 1.2s; width: 12px; height: 12px; background: var(--text-amber); }
+
+.loading-ring {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(226, 184, 87, 0.15);
+  border-top-color: var(--text-gold);
+  animation: loading-ring 2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.loading-ring:nth-child(4) { width: 80px; height: 80px; animation-direction: reverse; animation-duration: 3s; border-top-color: var(--text-lavender); }
+.loading-ring:nth-child(5) { width: 60px; height: 60px; animation-duration: 2.5s; border-top-color: var(--text-amber); }
 
 .loading-title {
   font-size: 1.5rem;
   margin-bottom: 1rem;
+  animation: progress-pulse 2s ease-in-out infinite;
 }
 
 .loading-status {
@@ -839,6 +875,25 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   min-height: 1.5rem;
+  animation: progress-pulse 2s ease-in-out infinite;
+}
+
+.loading-progress-bar {
+  width: 200px;
+  height: 2px;
+  background: rgba(226, 184, 87, 0.1);
+  border-radius: 2px;
+  margin-top: 1.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.loading-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--text-gold), var(--text-amber), var(--text-gold));
+  background-size: 200% 100%;
+  border-radius: 2px;
+  animation: shimmer 1.5s ease-in-out infinite, loading-bar 5s ease-out forwards;
 }
 
 /* ============================================
@@ -1464,6 +1519,7 @@
   background: rgba(226, 184, 87, 0.05);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: bounce-subtle 0.4s ease;
 }
 
 .share-btn svg {
