@@ -30,7 +30,7 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [shareTooltip, setShareTooltip] = useState('');
 
-  const SITE_URL = 'https://ratahitopia06-ops.github.io/Pneuma/';
+  const SITE_URL = 'https://00f5400b642158d415ced27cbc4727f9.ctonew.app';
   const SHARE_TEXT = 'Esonutra — The Esoteric Diet: Align your natal chart with the Fourfold Day eating rhythm.';
 
   const shareOnTwitter = () => {
@@ -53,7 +53,7 @@ function App() {
     });
   };
 
-  const INSTAGRAM_USERNAME = 'rhespiral_lightfood';
+  const INSTAGRAM_USERNAME = 'tobiasianism';
 
   const shareOnInstagram = () => {
     window.open(`https://instagram.com/${INSTAGRAM_USERNAME}`, '_blank', 'noopener,noreferrer');
@@ -200,7 +200,7 @@ function App() {
       {/* Navigation */}
       <nav className="nav-bar">
         <div className="brand" onClick={() => setActiveTab('landing')} style={{ cursor: 'pointer' }}>
-          <img src="/logo.svg" alt="Esonutra" width="32" height="32" style={{ filter: 'drop-shadow(0 0 6px #e2b857)' }} />
+          <img src="/Pneuma/logo.svg" alt="Esonutra" width="32" height="32" style={{ filter: 'drop-shadow(0 0 6px #e2b857)' }} />
           <span className="brand-font">ESONUTRA</span>
         </div>
         
@@ -458,7 +458,7 @@ function App() {
 
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <div className="safety-seal-box">
-                  <img src="/logo.svg" alt="" width="60" height="60" style={{ filter: 'drop-shadow(0 0 8px rgba(226, 184, 87, 0.5))' }} />
+                  <img src="/Pneuma/logo.svg" alt="" width="60" height="60" style={{ filter: 'drop-shadow(0 0 8px rgba(226, 184, 87, 0.5))' }} />
                   <div className="seal-title">NZ MPI ALIGNED</div>
                   <p className="seal-desc">This system matches certified food safety standards and New Zealand botanical handling regulations, ensuring clean, non-toxic prep.</p>
                   <div style={{ fontSize: '0.75rem', color: '#34d399', fontWeight: 'bold', marginTop: '1rem', border: '1px solid #34d399', padding: '0.25rem 0.5rem', borderRadius: '4px' }}>SAFETY CERTIFIED</div>
@@ -1067,7 +1067,7 @@ function App() {
       <footer className="footer">
         <div className="footer-content">
           <div className="footer-brand">
-            <img src="/logo.svg" alt="" width="24" height="24" style={{ filter: 'drop-shadow(0 0 4px rgba(226, 184, 87, 0.5))' }} />
+            <img src="/Pneuma/logo.svg" alt="" width="24" height="24" style={{ filter: 'drop-shadow(0 0 4px rgba(226, 184, 87, 0.5))' }} />
             <span className="brand-font" style={{ fontSize: '1.2rem' }}>ESONUTRA</span>
           </div>
           <p className="footer-desc">
