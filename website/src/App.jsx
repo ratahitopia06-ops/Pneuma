@@ -1198,6 +1198,7 @@ function App() {
             <span className="footer-link" onClick={() => transitionToTab('intake')}>Natal Intake</span>
             <span className="footer-link" onClick={() => transitionToTab('post-purchase')}>Download Center</span>
             <a href="https://buy.stripe.com/bJefZhemgc3i2Zb3tGfnO00" target="_blank" rel="noopener noreferrer" className="footer-link">Payment Link</a>
+            <a href="https://spiral-source-node.base44.app/construct" target="_blank" rel="noopener noreferrer" className="footer-link">Philosophy</a>
           </div>
 
 
