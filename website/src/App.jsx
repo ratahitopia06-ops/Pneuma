@@ -3,8 +3,9 @@ import {
   Compass, Sun, Moon, Sparkles, Clock, MapPin, Target, Globe,
   CreditCard, Download, BookOpen, ShieldCheck, 
   Calendar, Flame, Droplets, Wind, Mountain, 
-  Menu, X, ChevronRight, ArrowRight, Lock, 
-  CheckCircle, AlertCircle, Coffee, Eye, Heart, Share2
+  Menu, X, ChevronRight, ArrowRight, Lock, Unlock,
+  CheckCircle, AlertCircle, Coffee, Eye, Heart, Share2,
+  Plus, Trash2, Save, Package, Users, ShoppingCart, BarChart3
 } from 'lucide-react'
 import './App.css'
 import CosmicBackground from './CosmicBackground.jsx'
@@ -17,6 +18,7 @@ import sealingNight from './assets/sealing-night.png'
 import signalDust from './assets/signal-dust.png'
 import furnacePaste from './assets/furnace-paste.png'
 import brothCubes from './assets/broth-cubes.png'
+import esoImage from './assets/eso.png'
 
 // Import real astrological calculation engine
 import { 
@@ -124,6 +126,25 @@ function App() {
   // Personalized Results State
   const [chartResult, setChartResult] = useState(null);
 
+  // Admin Dashboard State
+  const ADMIN_PASSWORD = 'esonutra2024';
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminAuthenticated, setAdminAuthenticated] = useState(false);
+  const [adminPasswordError, setAdminPasswordError] = useState('');
+  const [adminTab, setAdminTab] = useState('overview');
+  
+  // Dashboard data
+  const [chartIntakes, setChartIntakes] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('esonutra_intakes') || '[]'); } catch { return []; }
+  });
+  const [products, setProducts] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('esonutra_products') || '[]'); } catch { return []; }
+  });
+  const [orders, setOrders] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('esonutra_orders') || '[]'); } catch { return []; }
+  });
+  const [toast, setToast] = useState({ show: false, message: '', type: '' });
+
   // Auto-scroll to top on tab change
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -216,6 +237,146 @@ function App() {
     
     setChartResult(result);
     setAnalyzingState(1);
+    
+    // Save to localStorage for admin dashboard
+    const intake = {
+      id: Date.now().toString(),
+      name: formData.name,
+      birthDate: formData.birthDate,
+      birthTime: formData.birthTime,
+      location: formData.birthLocation,
+      timezone: formData.birthTimezone,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
+      timestamp: new Date().toISOString(),
+      sunSign: result?.sunSign?.name || '',
+      ascendant: result?.ascendantSign?.name || '',
+      bodyGate: result?.bodyGate || ''
+    };
+    const existing = JSON.parse(localStorage.getItem('esonutra_intakes') || '[]');
+    existing.unshift(intake);
+    localStorage.setItem('esonutra_intakes', JSON.stringify(existing));
+    setChartIntakes(existing);
+  };
+
+  // Admin Dashboard Handlers
+  const handleAdminLogin = (e) => {
+    if (e) e.preventDefault();
+    if (adminPassword === ADMIN_PASSWORD) {
+      setAdminAuthenticated(true);
+      setAdminPasswordError('');
+      setAdminPassword('');
+      setActiveTab('admin');
+      document.getElementById('admin-password-modal')?.classList.remove('visible');
+    } else {
+      setAdminPasswordError('Incorrect password. Try again.');
+    }
+  };
+
+  const handleAdminLogout = () => {
+    setAdminAuthenticated(false);
+    setAdminPassword('');
+    setAdminPasswordError('');
+    setActiveTab('landing');
+  };
+
+  const handleAdminNavClick = () => {
+    if (adminAuthenticated) {
+      setActiveTab('admin');
+    } else {
+      setAdminPassword('');
+      setAdminPasswordError('');
+      document.getElementById('admin-password-modal')?.classList.add('visible');
+    }
+  };
+
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: '', type: '' }), 3000);
+  };
+
+  // Product management
+  const [newProduct, setNewProduct] = useState({ name: '', description: '', price: '', status: 'active' });
+  const [showProductForm, setShowProductForm] = useState(false);
+
+  const defaultProducts = [
+    { id: 'p1', name: 'Broth Cubes', description: 'Concentrated mineral bone broth cubes for Anabolic phase', price: '24.00', status: 'active' },
+    { id: 'p2', name: 'Furnace Paste', description: 'Nighttime sealing botanical paste', price: '32.00', status: 'active' },
+    { id: 'p3', name: 'Signal Dust', description: 'Morning catalyst powder for Catabolic phase', price: '28.00', status: 'active' },
+    { id: 'p4', name: 'Seed Memory Paste', description: 'Hybrid midday grounding paste with sprouted seeds', price: '26.00', status: 'draft' },
+    { id: 'p5', name: "Worker's Salt", description: 'Mineral electrolyte salt blend for active days', price: '18.00', status: 'active' }
+  ];
+
+  const initProducts = () => {
+    const stored = localStorage.getItem('esonutra_products');
+    if (!stored || JSON.parse(stored).length === 0) {
+      localStorage.setItem('esonutra_products', JSON.stringify(defaultProducts));
+      setProducts(defaultProducts);
+    }
+  };
+
+  useEffect(() => { initProducts(); }, []);
+
+  const handleAddProduct = () => {
+    if (!newProduct.name.trim() || !newProduct.price.trim()) return;
+    const product = {
+      id: 'p' + Date.now(),
+      ...newProduct
+    };
+    const updated = [...products, product];
+    setProducts(updated);
+    localStorage.setItem('esonutra_products', JSON.stringify(updated));
+    setNewProduct({ name: '', description: '', price: '', status: 'active' });
+    setShowProductForm(false);
+    showToast('Product added successfully');
+  };
+
+  const handleUpdateProduct = (id, field, value) => {
+    const updated = products.map(p => p.id === id ? { ...p, [field]: value } : p);
+    setProducts(updated);
+    localStorage.setItem('esonutra_products', JSON.stringify(updated));
+    showToast('Product updated');
+  };
+
+  const handleDeleteProduct = (id) => {
+    const updated = products.filter(p => p.id !== id);
+    setProducts(updated);
+    localStorage.setItem('esonutra_products', JSON.stringify(updated));
+    showToast('Product deleted');
+  };
+
+  // Order management
+  const [newOrder, setNewOrder] = useState({ customer: '', product: '', quantity: '1', total: '', status: 'Pending' });
+  const [showOrderForm, setShowOrderForm] = useState(false);
+
+  const handleAddOrder = () => {
+    if (!newOrder.customer.trim() || !newOrder.product.trim() || !newOrder.total.trim()) return;
+    const order = {
+      id: 'o' + Date.now(),
+      ...newOrder,
+      quantity: parseInt(newOrder.quantity) || 1,
+      total: parseFloat(newOrder.total).toFixed(2),
+      date: new Date().toISOString().split('T')[0]
+    };
+    const updated = [...orders, order];
+    setOrders(updated);
+    localStorage.setItem('esonutra_orders', JSON.stringify(updated));
+    setNewOrder({ customer: '', product: '', quantity: '1', total: '', status: 'Pending' });
+    setShowOrderForm(false);
+    showToast('Order added');
+  };
+
+  const handleUpdateOrderStatus = (id, status) => {
+    const updated = orders.map(o => o.id === id ? { ...o, status } : o);
+    setOrders(updated);
+    localStorage.setItem('esonutra_orders', JSON.stringify(updated));
+  };
+
+  const handleDeleteOrder = (id) => {
+    const updated = orders.filter(o => o.id !== id);
+    setOrders(updated);
+    localStorage.setItem('esonutra_orders', JSON.stringify(updated));
+    showToast('Order deleted');
   };
 
   const handleResetIntake = () => {
@@ -308,6 +469,9 @@ function App() {
             else transitionToTab('intake');
           }}>Natal Intake</span>
           <span className={`nav-link ${activeTab === 'post-purchase' ? 'active' : ''}`} onClick={() => transitionToTab('post-purchase')}>Report Retrieval</span>
+          <span className={`nav-link ${activeTab === 'admin' ? 'active' : ''}`} onClick={handleAdminNavClick}>
+            {adminAuthenticated ? <Unlock size={14} /> : <Lock size={14} />} Admin
+          </span>
           <button className="cta-nav-button btn-pulse" onClick={(e) => {
             createRipple(e);
             if (chartResult) transitionToTab('blueprint');
@@ -375,6 +539,41 @@ function App() {
                 </button>
               </div>
             </header>
+
+            {/* ESO — Mystical Guide Character */}
+            <section className="eso-section fade-in-up">
+              <div className="eso-container">
+                <div className="eso-avatar-wrapper">
+                  <img src={esoImage} alt="ESO — Your Spiritual Guide" className="eso-avatar" />
+                  <div className="eso-glow"></div>
+                </div>
+                <div className="eso-speech">
+                  <p className="eso-greeting">I am <strong>ESO</strong>, your guide through the esoteric diet.</p>
+                  <p className="eso-message">Let me show you the <span className="highlight-gold">Fourfold Day</span>.</p>
+                </div>
+                <div className="eso-actions">
+                  <button className="btn-primary btn-pulse" onClick={(e) => {
+                    createRipple(e);
+                    transitionToTab('intake');
+                  }}>
+                    Begin Chart Intake
+                  </button>
+                  <button className="btn-secondary" onClick={(e) => {
+                    createRipple(e);
+                    const el = document.getElementById('doctrine');
+                    el?.scrollIntoView({ behavior: 'smooth' });
+                  }}>
+                    Explore Doctrine
+                  </button>
+                  <button className="btn-secondary" onClick={(e) => {
+                    createRipple(e);
+                    transitionToTab('rotation');
+                  }}>
+                    View Weekly Rotation
+                  </button>
+                </div>
+              </div>
+            </section>
 
             {/* Core Value Props Grid */}
             <section className="page-entrance entrance-content" style={{ margin: '4rem 0' }}>
@@ -1180,6 +1379,319 @@ function App() {
             </section>
           </div>
         )}
+
+        {/* ADMIN DASHBOARD VIEW */}
+        {activeTab === 'admin' && adminAuthenticated && (
+          <div className="admin-dashboard">
+            {/* Toast Notification */}
+            {toast.show && (
+              <div className={`admin-toast admin-toast-${toast.type}`}>
+                {toast.type === 'success' ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
+                {toast.message}
+              </div>
+            )}
+
+            {/* Dashboard Header */}
+            <div className="admin-header">
+              <div className="admin-header-left">
+                <BarChart3 size={28} className="admin-icon" />
+                <h2 className="admin-title">Management Dashboard</h2>
+              </div>
+              <div className="admin-header-right">
+                <span className="admin-badge" style={{ background: 'rgba(52,211,153,0.15)', color: '#34d399' }}>Authenticated</span>
+                <button className="admin-logout-btn" onClick={handleAdminLogout}>
+                  Logout <Lock size={14} />
+                </button>
+              </div>
+            </div>
+
+            {/* Dashboard Tabs */}
+            <div className="admin-tabs">
+              <button className={`admin-tab ${adminTab === 'overview' ? 'active' : ''}`} onClick={() => setAdminTab('overview')}>
+                <BarChart3 size={16} /> Overview
+              </button>
+              <button className={`admin-tab ${adminTab === 'intakes' ? 'active' : ''}`} onClick={() => setAdminTab('intakes')}>
+                <Users size={16} /> Chart Intakes
+              </button>
+              <button className={`admin-tab ${adminTab === 'products' ? 'active' : ''}`} onClick={() => setAdminTab('products')}>
+                <Package size={16} /> Products
+              </button>
+              <button className={`admin-tab ${adminTab === 'orders' ? 'active' : ''}`} onClick={() => setAdminTab('orders')}>
+                <ShoppingCart size={16} /> Orders
+              </button>
+            </div>
+
+            {/* Overview Panel */}
+            {adminTab === 'overview' && (
+              <div className="admin-overview">
+                <div className="admin-stats-grid">
+                  <div className="admin-stat-card">
+                    <div className="stat-icon"><Users size={24} /></div>
+                    <div className="stat-info">
+                      <div className="stat-value">{chartIntakes.length}</div>
+                      <div className="stat-label">Chart Intakes</div>
+                    </div>
+                  </div>
+                  <div className="admin-stat-card">
+                    <div className="stat-icon"><Package size={24} /></div>
+                    <div className="stat-info">
+                      <div className="stat-value">{products.length}</div>
+                      <div className="stat-label">Products</div>
+                    </div>
+                  </div>
+                  <div className="admin-stat-card">
+                    <div className="stat-icon"><ShoppingCart size={24} /></div>
+                    <div className="stat-info">
+                      <div className="stat-value">{orders.length}</div>
+                      <div className="stat-label">Orders</div>
+                    </div>
+                  </div>
+                  <div className="admin-stat-card">
+                    <div className="stat-icon"><CreditCard size={24} /></div>
+                    <div className="stat-info">
+                      <div className="stat-value">$0.00</div>
+                      <div className="stat-label">Revenue (placeholder)</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Chart Intakes Panel */}
+            {adminTab === 'intakes' && (
+              <div className="admin-panel">
+                <div className="admin-panel-header">
+                  <h3>Chart Intake Log</h3>
+                  <span className="admin-count">{chartIntakes.length} total</span>
+                </div>
+                {chartIntakes.length === 0 ? (
+                  <div className="admin-empty">No chart intakes yet. Complete a chart intake to see data here.</div>
+                ) : (
+                  <div className="admin-table-wrap">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Birth Date</th>
+                          <th>Birth Time</th>
+                          <th>Location</th>
+                          <th>Submitted</th>
+                          <th>Details</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {chartIntakes.slice(0, 50).map(intake => (
+                          <tr key={intake.id}>
+                            <td>{intake.name}</td>
+                            <td>{intake.birthDate}</td>
+                            <td>{intake.birthTime}</td>
+                            <td>{intake.location}</td>
+                            <td style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                              {new Date(intake.timestamp).toLocaleDateString()}
+                            </td>
+                            <td>
+                              <details className="admin-details">
+                                <summary style={{ cursor: 'pointer', color: 'var(--text-gold)', fontSize: '0.85rem' }}>View</summary>
+                                <div className="admin-details-content">
+                                  <div>Sun Sign: {intake.sunSign || 'N/A'}</div>
+                                  <div>Ascendant: {intake.ascendant || 'N/A'}</div>
+                                  <div>Body Gate: {intake.bodyGate || 'N/A'}</div>
+                                  <div>Timezone: {intake.timezone}</div>
+                                  <div>Lat: {intake.latitude || 'N/A'}, Lng: {intake.longitude || 'N/A'}</div>
+                                </div>
+                              </details>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Products Panel */}
+            {adminTab === 'products' && (
+              <div className="admin-panel">
+                <div className="admin-panel-header">
+                  <h3>Product Management</h3>
+                  <button className="admin-add-btn" onClick={() => setShowProductForm(!showProductForm)}>
+                    <Plus size={16} /> Add Product
+                  </button>
+                </div>
+
+                {showProductForm && (
+                  <div className="admin-form">
+                    <input className="admin-input" placeholder="Product name" value={newProduct.name}
+                      onChange={e => setNewProduct({...newProduct, name: e.target.value})} />
+                    <input className="admin-input" placeholder="Description" value={newProduct.description}
+                      onChange={e => setNewProduct({...newProduct, description: e.target.value})} />
+                    <input className="admin-input" placeholder="Price ($)" type="number" step="0.01" value={newProduct.price}
+                      onChange={e => setNewProduct({...newProduct, price: e.target.value})} />
+                    <select className="admin-select" value={newProduct.status}
+                      onChange={e => setNewProduct({...newProduct, status: e.target.value})}>
+                      <option value="active">Active</option>
+                      <option value="draft">Draft</option>
+                    </select>
+                    <div className="admin-form-actions">
+                      <button className="btn-primary" onClick={handleAddProduct}><Save size={16} /> Save Product</button>
+                      <button className="btn-secondary" onClick={() => setShowProductForm(false)}>Cancel</button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="admin-table-wrap">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {products.map(product => (
+                        <tr key={product.id}>
+                          <td style={{ fontWeight: 600 }}>{product.name}</td>
+                          <td style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{product.description}</td>
+                          <td>${product.price}</td>
+                          <td>
+                            <select className="admin-status-select" value={product.status}
+                              onChange={e => handleUpdateProduct(product.id, 'status', e.target.value)}>
+                              <option value="active">Active</option>
+                              <option value="draft">Draft</option>
+                            </select>
+                          </td>
+                          <td>
+                            <button className="admin-delete-btn" onClick={() => handleDeleteProduct(product.id)}>
+                              <Trash2 size={14} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Orders Panel */}
+            {adminTab === 'orders' && (
+              <div className="admin-panel">
+                <div className="admin-panel-header">
+                  <h3>Order Tracking</h3>
+                  <button className="admin-add-btn" onClick={() => setShowOrderForm(!showOrderForm)}>
+                    <Plus size={16} /> Add Order
+                  </button>
+                </div>
+
+                {showOrderForm && (
+                  <div className="admin-form">
+                    <input className="admin-input" placeholder="Customer name" value={newOrder.customer}
+                      onChange={e => setNewOrder({...newOrder, customer: e.target.value})} />
+                    <input className="admin-input" placeholder="Product name" value={newOrder.product}
+                      onChange={e => setNewOrder({...newOrder, product: e.target.value})} />
+                    <input className="admin-input" placeholder="Quantity" type="number" min="1" value={newOrder.quantity}
+                      onChange={e => setNewOrder({...newOrder, quantity: Math.max(1, parseInt(e.target.value) || 1).toString()})} />
+                    <input className="admin-input" placeholder="Total ($)" type="number" step="0.01" value={newOrder.total}
+                      onChange={e => setNewOrder({...newOrder, total: e.target.value})} />
+                    <select className="admin-select" value={newOrder.status}
+                      onChange={e => setNewOrder({...newOrder, status: e.target.value})}>
+                      <option value="Pending">Pending</option>
+                      <option value="Processing">Processing</option>
+                      <option value="Shipped">Shipped</option>
+                      <option value="Delivered">Delivered</option>
+                    </select>
+                    <div className="admin-form-actions">
+                      <button className="btn-primary" onClick={handleAddOrder}><Save size={16} /> Save Order</button>
+                      <button className="btn-secondary" onClick={() => setShowOrderForm(false)}>Cancel</button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="admin-table-wrap">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Customer</th>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Total</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {orders.length === 0 ? (
+                        <tr>
+                          <td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>
+                            No orders yet. Add an order to get started.
+                          </td>
+                        </tr>
+                      ) : (
+                        orders.map(order => (
+                          <tr key={order.id}>
+                            <td style={{ fontWeight: 600 }}>{order.customer}</td>
+                            <td style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{order.product}</td>
+                            <td>{order.quantity}</td>
+                            <td>${order.total}</td>
+                            <td style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{order.date}</td>
+                            <td>
+                              <select className="admin-status-select" value={order.status}
+                                onChange={e => handleUpdateOrderStatus(order.id, e.target.value)}>
+                                <option value="Pending">Pending</option>
+                                <option value="Processing">Processing</option>
+                                <option value="Shipped">Shipped</option>
+                                <option value="Delivered">Delivered</option>
+                              </select>
+                            </td>
+                            <td>
+                              <button className="admin-delete-btn" onClick={() => handleDeleteOrder(order.id)}>
+                                <Trash2 size={14} />
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Admin Password Modal */}
+        <div className="admin-modal" id="admin-password-modal">
+          <div className="admin-modal-content">
+            <div className="admin-modal-header">
+              <Lock size={24} className="admin-icon" />
+              <h3>Admin Access</h3>
+            </div>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontSize: '0.9rem' }}>Enter the management password to access the dashboard.</p>
+            <input 
+              type="password" 
+              className="admin-input" 
+              placeholder="Enter password"
+              value={adminPassword}
+              onChange={e => { setAdminPassword(e.target.value); setAdminPasswordError(''); }}
+              onKeyDown={e => { if (e.key === 'Enter') handleAdminLogin(e); }}
+              autoFocus
+            />
+            {adminPasswordError && <div className="validation-error" style={{ marginTop: '0.5rem' }}><AlertCircle size={14} /> {adminPasswordError}</div>}
+            <div className="admin-modal-actions">
+              <button className="btn-primary" onClick={(e) => handleAdminLogin(e)}>Unlock Dashboard</button>
+              <button className="btn-secondary" onClick={() => {
+                document.getElementById('admin-password-modal')?.classList.remove('visible');
+                setAdminPassword('');
+                setAdminPasswordError('');
+              }}>Cancel</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Footer */}
